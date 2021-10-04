@@ -1,4 +1,4 @@
-FROM ubuntu:lts
+FROM ubuntu
 RUN apt-get update -y
 RUN apt-get install -y \ 
     tree \
@@ -7,5 +7,6 @@ RUN apt-get install -y \
 COPY . /app
 WORKDIR /app
 RUN ["chmod", "+x", "startup.sh"]
-ENTRYPOINT [ "/app/startup.sh" ]
+EXPOSE 8000
+ENTRYPOINT [ "startup.sh" ]
 ENV PYTHONUNBUFFERED=1s
