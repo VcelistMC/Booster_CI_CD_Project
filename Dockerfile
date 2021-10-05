@@ -8,5 +8,5 @@ COPY . /app
 WORKDIR /app
 RUN ["chmod", "+x", "startup.sh"]
 EXPOSE 8000
-ENTRYPOINT [ "startup.sh" ]
+ENTRYPOINT [ "/app/startup.sh" ]
 ENV PYTHONUNBUFFERED=1s
