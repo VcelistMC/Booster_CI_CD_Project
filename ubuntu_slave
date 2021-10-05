@@ -1,0 +1,23 @@
+FROM ubuntu
+#prep slave
+USER root
+RUN mkdir -p jenkins_home
+RUN chmod 777 jenkins_home
+#install connection tools
+RUN apt-get update -qq
+RUN apt-get install openssh-server -qq
+RUN apt-get install vim -qq
+RUN apt-get install openjdk-8-jdk -qq
+COPY "slave_setup.sh" /jenkins_home
+RUN ["chmod", "+x", "/jenkins_home/slave_setup.sh"]
+ENTRYPOINT [ "/jenkins_home/slave_setup.sh" ]
+#install docker
+RUN apt-get install -qq apt-transport-https ca-certificates curl software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+RUN apt-cache policy docker-ce
+RUN apt install docker-ce -y
+RUN useradd -ms /bin/bash jenkins
+RUN usermod -aG docker jenkins
+WORKDIR /jenkins_home
+CMD [ "/bin/bash" ] 
