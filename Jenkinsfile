@@ -20,7 +20,7 @@ pipeline {
             steps{
                 echo "===================================== Building Image ====================================="
                 sh """
-                    DOCKER_BUILDKIT=0  docker build -t peteratef/djangoApp:dev .
+                    DOCKER_BUILDKIT=0  docker build -t peteratef/django-app:dev .
                 """
             }
             post{
@@ -33,6 +33,9 @@ pipeline {
             }
         }
         stage("docker push"){
+            when{
+                expression{ return params.pushToRemote; }
+            }
             steps{
                 echo "===================================== Pushing Image to remote ====================================="
                 withCredentials([
@@ -45,7 +48,7 @@ pipeline {
                 {
                     sh """
                         docker login -u ${USERNAME} -p ${PASSWORD}
-                        docker push peteratef/djangoApp:dev
+                        docker push peteratef/django-app:dev
                     """
                 }
             }
@@ -63,18 +66,18 @@ pipeline {
             steps{
                 echo "===================================== Cleaning workspace ====================================="
                 sh """
-                    docker container stop djangoApp || true
-                    docker container rm djangoApp || true
+                    docker container stop django-app || true
+                    docker container rm django-app || true
                 """
                 echo "===================================== Deploying ====================================="
-                sh 'docker run -d -p 8000:8000 --name djangoApp peteratef/djangoApp:dev'
+                sh 'docker run -d -p 8000:8000 --name django-app peteratef/django-app:dev'
             }
             post{
                 success{
-                    "Deployment successful :D"
+                    echo "Deployment successful :D"
                 }
                 failure{
-                    "Deployment Failed"
+                    echo "Deployment Failed"
                 }
             }
         }
