@@ -94,7 +94,7 @@ pipeline {
             echo "pipeline failed :("
             slackSend(
                 color: "#ff0000",
-                message "dev build failed"
+                message: "dev build failed"
             )
         }
     }
