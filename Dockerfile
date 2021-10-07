@@ -7,7 +7,7 @@ RUN apt-get install -y \
 COPY . /app
 WORKDIR /app
 RUN ["chmod", "+x", "startup.sh"]
-EXPOSE 8000
+EXPOSE 8070
 ENV PYTHONUNBUFFERED=1s
 RUN  /app/startup.sh
-CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8070"]

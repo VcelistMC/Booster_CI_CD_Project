@@ -20,7 +20,7 @@ pipeline {
             steps{
                 echo "===================================== Building Image ====================================="
                 sh """
-                    DOCKER_BUILDKIT=0  docker build -t peteratef/django-app:dev .
+                    DOCKER_BUILDKIT=0  docker build -t peteratef/django-app:prod .
                 """
             }
             post{
@@ -48,7 +48,7 @@ pipeline {
                 {
                     sh """
                         docker login -u ${USERNAME} -p ${PASSWORD}
-                        docker push peteratef/django-app:dev
+                        docker push peteratef/django-app:prod
                     """
                 }
             }
@@ -66,11 +66,11 @@ pipeline {
             steps{
                 echo "===================================== Cleaning workspace ====================================="
                 sh """
-                    docker container stop django-app || true
-                    docker container rm django-app || true
+                    docker container stop django-app-prod || true
+                    docker container rm django-app-prod || true
                 """
                 echo "===================================== Deploying ====================================="
-                sh 'docker run -d -p 8000:8000 --name django-app peteratef/django-app:dev'
+                sh 'docker run -d -p 8070:8070 --name django-app-prod peteratef/django-app:prod'
             }
             post{
                 success{
@@ -85,9 +85,17 @@ pipeline {
     post{
         success{
             echo "Pipeline deployment successful"
+            slackSend(
+                color: "#40ff00",
+                message: "production build up and running at localhost:8070"
+            )
         }
         failure{
             echo "pipeline failed :("
+            slackSend(
+                color: "#ff0000",
+                message "production build failed"
+            )
         }
     }
 }
