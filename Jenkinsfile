@@ -66,11 +66,11 @@ pipeline {
             steps{
                 echo "===================================== Cleaning workspace ====================================="
                 sh """
-                    docker container stop django-app || true
-                    docker container rm django-app || true
+                    docker container stop django-app-dev || true
+                    docker container rm django-app-dev || true
                 """
                 echo "===================================== Deploying ====================================="
-                sh 'docker run -d -p 8000:8000 --name django-app peteratef/django-app:dev'
+                sh 'docker run -d -p 8000:8000 --name django-app-dev peteratef/django-app:dev'
             }
             post{
                 success{
@@ -85,9 +85,17 @@ pipeline {
     post{
         success{
             echo "Pipeline deployment successful"
+            slackSend(
+                color: "#40ff00",
+                message: "dev build up and running at localhost:8000"
+            )
         }
         failure{
             echo "pipeline failed :("
+            slackSend(
+                color: "#ff0000",
+                message "dev build failed"
+            )
         }
     }
 }
