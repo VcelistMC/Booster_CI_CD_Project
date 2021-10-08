@@ -20,7 +20,7 @@ pipeline {
             steps{
                 echo "===================================== Building Image ====================================="
                 sh """
-                    DOCKER_BUILDKIT=0  docker build -t peteratef/django-app:dev .
+                    docker build -t peteratef/django-app:dev .
                 """
             }
             post{
